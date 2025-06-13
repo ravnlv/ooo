@@ -1,0 +1,316 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Birthday App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-blue-200 min-h-screen flex items-center justify-center p-4">
+  <div
+    id="app"
+    class="max-w-md w-full bg-blue-400 rounded-xl shadow-lg p-6 flex flex-col items-center text-white"
+  >
+    <!-- Content will be injected here by JS -->
+  </div>
+
+  <audio id="bg-music" src="https://p.scdn.co/mp3-preview/736PP5LTtREkDgktNmX3Gu?si=402a63310c8b4efc" loop></audio>
+
+  <script>
+    const app = document.getElementById('app');
+    const bgMusic = document.getElementById('bg-music');
+
+    // Colors
+    const btnClass =
+      'bg-sky-400 hover:bg-sky-500 active:bg-sky-600 text-white font-semibold rounded-lg px-6 py-3 shadow-md transition-all duration-200 ease-in-out';
+
+    // State variables
+    let birthdayBoy = '';
+    let age = '';
+    let gaClickCount = 0;
+
+    // Clear app content
+    function clearApp() {
+      app.innerHTML = '';
+    }
+
+    // Create button element
+    function createButton(text, onClick, extraClasses = '') {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `${btnClass} ${extraClasses} text-center`;
+      btn.textContent = text;
+      btn.addEventListener('click', onClick);
+      return btn;
+    }
+
+    // Create input element
+    function createInput(placeholder, type = 'text') {
+      const input = document.createElement('input');
+      input.type = type;
+      input.placeholder = placeholder;
+      input.required = true;
+      input.className =
+        'w-full rounded-md px-4 py-3 text-black font-semibold focus:outline-none focus:ring-2 focus:ring-sky-500';
+      return input;
+    }
+
+    // Create text element
+    function createText(text, size = 'text-xl', extraClasses = '') {
+      const p = document.createElement('p');
+      p.className = `${size} font-bold text-white text-center ${extraClasses}`;
+      p.textContent = text;
+      return p;
+    }
+
+    // Create image element
+    function createImage(src, alt, extraClasses = '') {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = alt;
+      img.className = `mx-auto ${extraClasses}`;
+      return img;
+    }
+
+    // Start background music on first interaction
+    function startMusic() {
+      if (bgMusic.paused) {
+        bgMusic.play().catch(() => {});
+      }
+    }
+
+    // Page 1: Input birthday boy's name
+    function page1() {
+      clearApp();
+      gaClickCount = 0;
+      birthdayBoy = '';
+      age = '';
+
+      const label = createText("WHO'S THE BIRTHDAY BOY TODAY ?", 'text-2xl mb-6');
+      const input = createInput("Enter the birthday boy's name");
+      input.autofocus = true;
+
+      const btn = createButton('ENTER', () => {
+        if (input.value.trim() === '') {
+          input.focus();
+          return;
+        }
+        birthdayBoy = input.value.trim();
+        startMusic();
+        page2();
+      });
+
+      app.appendChild(label);
+      app.appendChild(input);
+      app.appendChild(btn);
+    }
+
+    // Page 2: Show gif + birthday boy name + messages + NEXT button
+    function page2() {
+      clearApp();
+
+      const gif = createImage(
+        'https://media1.tenor.com/m/Zt6Z2NySypYAAAAC/celebrando-pocoyo.gif',
+        'Animated gif of Pocoyo celebrating with confetti and party hat',
+        'w-48 h-48 mb-6 rounded-lg'
+      );
+      const h1 = createText('HAAAAIIIIIIIIIII', 'text-3xl mb-2');
+      const nameText = createText(birthdayBoy, 'text-4xl mb-2');
+      const h2 = createText('HAPPY BIRTHDAYY MY LOVE', 'text-2xl mb-6');
+      const btn = createButton('NEXT', page3);
+
+      app.appendChild(gif);
+      app.appendChild(h1);
+      app.appendChild(nameText);
+      app.appendChild(h2);
+      app.appendChild(btn);
+    }
+
+    // Page 3: Input age with gif above + ENTER button
+    function page3() {
+      clearApp();
+
+      const gif = createImage(
+        'https://media1.tenor.com/m/RlJQpFtavfoAAAAC/pensando-pocoyo.gif',
+        'Animated gif of Pocoyo thinking with hand on chin',
+        'w-48 h-48 mb-6 rounded-lg'
+      );
+      const input = createInput('HOW OLD ARE YOU TODAYY ?', 'number');
+      input.min = 0;
+      input.max = 150;
+      input.autofocus = true;
+
+      const btn = createButton('ENTER', () => {
+        if (input.value.trim() === '' || isNaN(input.value) || input.value < 0) {
+          input.focus();
+          return;
+        }
+        age = input.value.trim();
+        page4();
+      });
+
+      app.appendChild(gif);
+      app.appendChild(input);
+      app.appendChild(btn);
+    }
+
+    // Page 4: Show message + gif + NEXT button
+    function page4() {
+      clearApp();
+
+      const msg = createText('YAHAHAHA SAYANNG AKU UDAH TUA', 'text-3xl mb-6');
+      const gif = createImage(
+        'https://media.tenor.com/lwHgtkwbOxQAAAAi/que-divertido-pocoyo.gif',
+        'Animated gif of Pocoyo laughing happily',
+        'w-48 h-48 mb-6 rounded-lg'
+      );
+      const btn = createButton('NEXT', page5);
+
+      app.appendChild(msg);
+      app.appendChild(gif);
+      app.appendChild(btn);
+    }
+
+    // Page 5: Birthday message intro + gif + NEXT button
+    function page5() {
+      clearApp();
+
+      const msg = createText("THERE'S A BIRTHDAY MESSAGE FOR YOUU BABYYYY", 'text-3xl mb-6');
+      const gif = createImage(
+        'https://media.tenor.com/vfY3krFQf7MAAAAi/hola-pocoyo.gif',
+        'Animated gif of Pocoyo waving hello happily',
+        'w-48 h-48 mb-6 rounded-lg'
+      );
+      const btn = createButton('NEXT', page6);
+
+      app.appendChild(msg);
+      app.appendChild(gif);
+      app.appendChild(btn);
+    }
+
+    // Page 6: Question + gif + NEXT button
+    function page6() {
+      clearApp();
+
+      const msg = createText('GIMANAAA MAU TAU BANGET NI APAA?', 'text-3xl mb-6');
+      const gif = createImage(
+        'https://media.tenor.com/tZoQcyh8VK8AAAAi/tocando-el-tambor-pocoyo.gif',
+        'Animated gif of Pocoyo playing a drum happily',
+        'w-48 h-48 mb-6 rounded-lg'
+      );
+      const btn = createButton('NEXT', page7);
+
+      app.appendChild(msg);
+      app.appendChild(gif);
+      app.appendChild(btn);
+    }
+
+    // Page 7: Message + gif + NEXT button
+    function page7() {
+      clearApp();
+
+      const gif = createImage(
+        'https://media.tenor.com/1PaacNNsSS4AAAAi/bailando-pocoyo.gif',
+        'Animated gif of Pocoyo dancing happily',
+        'w-48 h-48 mb-6 rounded-lg'
+      );
+      const msg = createText('TAPII KAMU HARUS JAWAB DULU INIII', 'text-3xl mb-6');
+      const btn = createButton('NEXT', page8);
+
+      app.appendChild(gif);
+      app.appendChild(msg);
+      app.appendChild(btn);
+    }
+
+    // Page 8: Question with two options and gif
+    function page8() {
+      clearApp();
+
+      const question = createText('Kamu sayang aku ga?', 'text-3xl mb-6');
+      const gif = createImage(
+        'https://media1.tenor.com/m/9cphQ1AjgCIAAAAC/yo-soy-pocoyo.gif',
+        'Animated gif of Pocoyo smiling and waving',
+        'w-48 h-48 mb-6 rounded-lg'
+      );
+
+      const btnSayang = createButton('SAYANG BANGET', () => {
+        page9();
+      }, 'w-full mb-4');
+
+      const btnGa = createButton('Ga', () => {
+        gaClickCount++;
+        if (gaClickCount === 1) {
+          btnGa.textContent = 'Serius..';
+          btnGa.classList.add('text-2xl', 'py-6');
+          btnGa.classList.remove('px-6');
+        } else if (gaClickCount === 2) {
+          btnGa.textContent = 'BY…';
+          btnGa.classList.add('text-4xl', 'py-8');
+          btnGa.classList.remove('text-2xl', 'py-6');
+        } else if (gaClickCount === 3) {
+          btnGa.textContent = '…';
+          btnGa.classList.add('text-6xl', 'py-10');
+          btnGa.classList.remove('text-4xl', 'py-8');
+        } else if (gaClickCount === 4) {
+          // Make SAYANG BANGET fill entire screen
+          btnSayang.classList.add('fixed', 'inset-0', 'm-0', 'w-full', 'h-full', 'text-8xl', 'flex', 'items-center', 'justify-center', 'rounded-none', 'z-50');
+          btnSayang.textContent = 'SAYANG BANGET';
+          btnSayang.focus();
+        }
+      }, 'w-full');
+
+      app.appendChild(question);
+      app.appendChild(gif);
+      app.appendChild(btnSayang);
+      app.appendChild(btnGa);
+    }
+
+    // Page 9: Final birthday message prompt with LOVE button
+    function page9() {
+      clearApp();
+
+      const msg = createText("HERE'S YOUR BDAY MESSAGE BABYY, CLICK LOVEEENYA YAA", 'text-3xl mb-6');
+      const btnLove = createButton('LOVE', () => {
+        page10();
+      }, 'w-40 text-3xl py-4 rounded-full');
+
+      app.appendChild(msg);
+      app.appendChild(btnLove);
+    }
+
+    // Page 10: Final birthday message with BACK button
+    function page10() {
+      clearApp();
+
+      const messageText =
+        `Hello my baby! Happy Birthdayy my lovee I loveeee youuu so badly, semoga panjangg umurr sehatt selalu murah rezekinyaa yak! Tetep gacor perkuliahannyaa otaayy, selalu jaga Kesehatan yakkk semogaa apaa yang kamuu cita citakann dan yang lagi kamu usahakann tercapaii yaa, I lovee youuu babyy - Raven`;
+
+      const msg = document.createElement('p');
+      msg.className = 'text-white text-center text-lg font-semibold whitespace-pre-line mb-8';
+      msg.textContent = messageText;
+
+      const btnBack = createButton('BACK', () => {
+        page1();
+      }, 'w-full');
+
+      app.appendChild(msg);
+      app.appendChild(btnBack);
+    }
+
+    // Initialize app
+    page1();
+  </script>
+</body>
+</html>
